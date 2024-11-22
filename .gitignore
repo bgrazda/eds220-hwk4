@@ -1,12 +1,12 @@
 .ipynb_checkpoints/gitignore-checkpoint
-        data/California_Fire_Perimeters_(all).cpg
-        data/California_Fire_Perimeters_(all).dbf
-        data/California_Fire_Perimeters_(all).prj
-        data/California_Fire_Perimeters_(all).shp
-        data/California_Fire_Perimeters_(all).shp.xml
-        data/California_Fire_Perimeters_(all).shx
-        data/thomas_fire.cpg
-        data/thomas_fire.dbf
-        data/thomas_fire.prj
-        data/thomas_fire.shp
-        data/thomas_fire.shx
+data/California_Fire_Perimeters_(all).cpg
+data/California_Fire_Perimeters_(all).dbf
+data/California_Fire_Perimeters_(all).prj
+data/California_Fire_Perimeters_(all).shp
+data/California_Fire_Perimeters_(all).shp.xml
+data/California_Fire_Perimeters_(all).shx
+data/thomas_fire.cpg
+data/thomas_fire.dbf
+data/thomas_fire.prj
+data/thomas_fire.shp
+data/thomas_fire.shx
