@@ -3,7 +3,7 @@
 ## About: 
 
 
-![images/sb-2017-thomas-fire.jpeg](sb-2017-thomas-fire.jpeg)
+![images/sb-2017-thomas-fire.jpeg](images/sb-2017-thomas-fire.jpeg)
 
 - Combine landsat dataset and outside shapefile to draw connections using false color imaging
 - Practice using NetCDF dataset and dropping dimensions
@@ -12,7 +12,8 @@
 
 ## Repository Structure
 
-`eds220-hwk4
+```bash
+eds220-hwk4
 │
 ├── data                        
 │   ├──California_Fire_Perimters_(all).cpg
@@ -36,7 +37,8 @@
 │
 ├── images/                       
 │   ├── ny_state_spills_per_county.png  # Final choropleth map
-│   ├── oil-spill.jpg             # Image used in the README`
+│   ├── oil-spill.jpg             # Image used in the README
+```
 
 “Repository Structure” section. A concise description of what’s housed in the repository. This includes information about the repository structure or file organization.
 “Data” section. Details regarding data access. Any necessary information on where data lives (e.g. is it housed in the repo, on a server, in a library / package etc.) and how to access it in order to run the code.
