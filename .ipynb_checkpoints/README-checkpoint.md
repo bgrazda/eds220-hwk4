@@ -3,7 +3,7 @@
 ## About: 
 
 
-![sb-2017-thomas.jpeg](sb-2017-thomas.jpeg)
+![sb-2017-thomas-fire.jpeg](sb-2017-thomas-fire.jpeg)
 
 
 
