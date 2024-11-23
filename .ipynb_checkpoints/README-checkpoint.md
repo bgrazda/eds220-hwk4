@@ -36,10 +36,23 @@ eds220-hwk4
 ├── .gitignore  
 │
 ├── images/                       
-│   ├── ny_state_spills_per_county.png  # Final choropleth map
-│   ├── oil-spill.jpg             # Image used in the README
+│   ├── sb-2017-thomas-fire.jpeg  # Image used in the README
+│                
 ```
 
-“Repository Structure” section. A concise description of what’s housed in the repository. This includes information about the repository structure or file organization.
-“Data” section. Details regarding data access. Any necessary information on where data lives (e.g. is it housed in the repo, on a server, in a library / package etc.) and how to access it in order to run the code.
-“References” section. In an appropriate, consistent format, including links, provide a reference to the course and any other sources that supported the development of the repository. Include formal references to the datasets. You can use the APA style to cite data sources as outlined here.
+## Data
+
+All of the data is located in the data folder. The landsat data is located within the UCSB Bren workbench-1 server in the following filepath:
+```bash
+/courses/EDS220/data/hwk4_landsat_data landsat8-2018-01-26-sb-simplified.nc
+```
+This landsat data was retrieved from the Microsoft Planetary Computer data catalogue. The Thomas Fire data can be directly accessed by selecting the shapefile using this [https://catalog.data.gov/dataset/california-fire-perimeters-all-b3436](link.)
+
+## References
+
+Galaz García, Carmen.Assignment4 – EDS 220 - Working with Environmental Datasets. (n.d.). https://meds-eds-220.github.io/MEDS-eds-220-course/assignments/assignment4.html
+
+Microsoft Planetary Computer. (n.d.). https://planetarycomputer.microsoft.com/dataset/landsat-c2-l2
+
+Publisher CAL FIRE. (2024, May 14). State of California - California Fire Perimeters (all). Catalog. https://catalog.data.gov/dataset/california-fire-perimeters-all-b3436 
+
