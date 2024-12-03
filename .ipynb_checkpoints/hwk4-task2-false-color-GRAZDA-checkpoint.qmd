@@ -1,0 +1,159 @@
+---
+jupyter: eds220-env
+---
+
+## False Color Imaging of the Thomas Fire
+
+##### Author: Brooke Grazda
+
+##### Link to Github Repo: https://github.com/bgrazda/eds220-hwk4
+
+**Purpose:** This notebook aims to use the landsat raster data of Santa Barbara County and create a false color map image with the Thomas Fire boundary. The 2017 Thomas Fire was the largest wildfire in California at the time. 
+
+**Highlights:** A highlight of this exercise was using a NetCDF dataset and dropping the band dimension. Another highlight was subsetting the variables to create a true color image and learning to account for sensitive outliers that may not show up due to cloud coverage. Moreover, using the `robust=True` argument with both the true color image and false color image was a key step for this. Reprojecting the CRS of both the Thomas Fire boundary and the landsat data was crucial to mapping. 
+
+**About the data:** The dataset is from a California fire perimeter database from Data.gov. The landsat data  is Landsat Collection 2 Level-2 atmosperically corrected surface reflectance data, collected by the Landsat 8 satellite. This data was pre-processed to remove data outside land and coarsen the spatial resolution.
+
+**References:** 
+
+Microsoft Planetary Computer. (n.d.). https://planetarycomputer.microsoft.com/dataset/landsat-c2-l2
+
+Publisher CAL FIRE. (2024, May 14). State of California - California Fire Perimeters (all). Catalog. https://catalog.data.gov/dataset/california-fire-perimeters-all-b3436 
+
+**Workflow**
+The first step we must do is import all of our necessary packages. 
+
+```{python}
+import pandas as pd
+import os
+import numpy as np
+import xarray as xr
+import rioxarray as rioxr
+import geopandas as gpd
+import matplotlib.pyplot as plt
+
+from shapely.geometry import box
+
+pd.set_option('display.max_columns', None) 
+```
+
+In our data folder, we have our landsat data that we will be using to create a visualization of Santa Barbara County. We also created a shapefile of the Thomas Fire boundary that we will later overlay on top of the landsat image. The goal here is to use the landsat data and create a false color image to highlight changes indicated by the Thomas Fire boundary.
+```{python}
+#| tags: []
+# Filepath using OS for reproducibility
+landsat_df = rioxr.open_rasterio(os.path.join('data', 
+                                             'landsat8-2018-01-26-sb-simplified.nc'))
+
+# Read in thomas boundary shapefile
+thomas_boundary = gpd.read_file(os.path.join('data', 
+                                    'thomas_fire.shp'))
+```
+
+### Preliminary Landsat Data Exploration
+
+```{python}
+#| tags: []
+# Check what the landsat looks like
+landsat_df.head()
+```
+
+```{python}
+#| tags: []
+# Check out data types
+landsat_df.dtypes
+```
+
+```{python}
+#| tags: []
+# Check out the CRS
+landsat_df.rio.crs
+```
+
+### Summary
+
+
+The landsat data is an xarray.Dataset with 3 dimensions: band, x, and y. The band dimension has a length of 1 while both the x and y dimensions have lengths of 5. The data variables each show a different pieces that make up the false color imagery including, red, green, blue, nir08 (near infrared, and swir (shortwave infrared). The CRS is EPSG 32611.
+
+### Wrangle Band Data
+As we discovered in our preliminary data exploration, the landsat_df is not exactly a dataframe. This object is a NetCDF created with a Rioxarray. There are elements to this that make the landsat data unfit for visualization, so we must wrangle the data to get it in the proper format for false color imaging. 
+
+```{python}
+#| tags: []
+# Drop the band dimension of the data
+landsat_df = landsat_df.squeeze().drop_vars('band')
+  
+# Check the dataset
+landsat_df
+```
+`squeeze()` is a method that removes all dimensions of the NetCDF with a length of 1. In this case, the `band` dimension is a length of 1. The `drop_vars() method specifies which element we want to remove, and returns the result rioxarray. I then called the dataset as a checkpoint to ensure the functions performed how I intended. Now that the band has been dropped, we can now start to visualize by selecting groups of the electromagnetic spectrum that are used in remote sensing. 
+
+### True Color Image 
+
+```{python}
+#| tags: []
+# Select red, green, and blue variables into an array and plot
+landsat_df[['red', 'green', 'blue']].to_array().plot.imshow()
+```
+What we see here is a sort of aggregated summary of the landsat data that excludes outlying values in our spectral bands. The clouds act as a barrier between the land cover and the satellite, so 
+
+```{python}
+# Robust parameters resolve the cloud cover issue
+landsat_df[['red', 'green', 'blue']].to_array().plot.imshow(robust=True)
+```
+
+In the first landsat image, the output did not show any of the actual land characteristics due to the cloud cover issue. The RGB values were outliers, allowing the image to be squished into what looks like a blank outline of the land area. In the second output, using the `robust=True` argument adjusts the scale to be more sensitive to outliers, giving us the true RGB image. The next step is to select short infrared, near infrared, and red bands for false color imaging.
+
+### False Color Image
+
+```{python}
+#| tags: []
+# Select short infrared, near infrared, and red bands to plot
+# Make plot sensitive to outliers with robust = True
+landsat_df[['swir22', 'nir08', 'red']].to_array().plot.imshow(robust = True)
+```
+Great! Before plotting the Thomas Fire boundary, it is important to make sure that the Coordinate Reference Systems match for both datasets. 
+### Map Thomas Fire Perimeter
+
+```{python}
+# Check to make sure CRS's match
+# If false, reproject
+thomas_boundary.crs == landsat_df.rio.crs
+```
+
+```{python}
+#| tags: []
+# Reproject CRS
+thomas_boundary= thomas_boundary.to_crs("EPSG:4326")
+landsat_df = landsat_df.rio.reproject("EPSG:4326")
+
+# Check
+thomas_boundary.crs == landsat_df.rio.crs
+```
+
+
+```{python}
+#| tags: []
+# Set fig and axes
+fig, ax = plt.subplots(figsize = (8,8))
+
+# Select bands and plot false color
+landsat_df[['swir22', 'nir08', 'red']].to_array().plot.imshow(robust = True)
+
+# Plot boundary on the same axes, label the legend 
+thomas_boundary.boundary.plot(ax = ax,
+                             color = '#E9190F',
+                             label = 'Thomas Fire Boundary',
+                             linewidth = 2)
+# Show legend
+ax.legend()
+
+# Label Title and Axes for cleanliness
+ax.set_title("False Color Map of California Thomas Fire in 2017", fontsize=14, fontweight='bold')
+ax.set_xlabel('X Coordinate of Projection (m)')
+ax.set_ylabel('Y Coordinate of Projection (m)')
+```
+
+### Figure Description
+
+The map above shows a false color image of the land burned by the Thomas Fire in California and surrounding areas.  The boundary of the 2017 Thomas Fire is indicated by the red outline on the map. The false color image utilizes the short inrared, near infrared, and red bands in the electromagnetic spectrum to visualize changes in vegetation. Furthermore, the false color imaging shows the secondary succession within the Thomas Fire boundaries, that would not be otherwise noticeable with a True Color Imaging technique. Using this false color, the difference between the land outside of the burned areas is starkly indicated by the green color. 
+
